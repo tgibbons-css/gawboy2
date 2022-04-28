@@ -21,7 +21,8 @@ class _MyAppState extends State<MyApp> {
   DataRepo repo = new DataRepo();
   Future<List<DataItem>> futureItems;
   AudioPlayer player;
-  bool languageState = true;   // state is true for Anishinaabe and false for English
+  bool languageState =
+      true; // state is true for Anishinaabe and false for English
 
   @override
   void initState() {
@@ -41,19 +42,6 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  final List<String> fileList = [
-    'by_the_fire_1.jpg',
-    'by_the_fire_2.jpg',
-    'by_the_fire_3.jpg',
-    'by_the_fire_4.jpg',
-    'by_the_fire_5.jpg',
-    'in_the_circle_1.jpg',
-    'in_the_circle_2.jpg',
-    'in_the_circle_3.jpg',
-    'in_the_circle_4.jpg',
-    'in_the_circle_5.jpg'
-  ];
-
   void playAudio(int index) async {
     await player.setAsset(repo.getJourdainAudio(index));
     player.play();
@@ -65,7 +53,6 @@ class _MyAppState extends State<MyApp> {
     } else {
       return repo.getJourdainEnglish(index);
     }
-
   }
 
   // This widget is the root of your application.
@@ -91,57 +78,69 @@ class _MyAppState extends State<MyApp> {
                     fit: BoxFit.cover));
               } else {
                 print("Inside FutureBuilder --- DATA");
-                return PageView.builder(
-                  controller: ctrl,
-                  //itemCount: fileList.length,
-                  itemCount: repo.length(),
-                  itemBuilder: (context, index) {
-                    print("PageView Builder --- playing audio "+index.toString());
-
-                    playAudio(index);
-                    return
-                      //Image.asset(items[index]);
-                      Container(
-                        constraints: BoxConstraints.expand(height: MediaQuery.of(context).size.height), // add this line
-                        child: Stack(
-                          //alignment: FractionalOffset(0.5, 0.8),
-                            children: <Widget>[
-                              KenBurns(
-                                maxScale: 2,
-                                minAnimationDuration: Duration(milliseconds: 10000),
-                                maxAnimationDuration: Duration(milliseconds: 20000),
-                                //child: Image.asset(filePrfix + fileList[index], fit: BoxFit.cover),
-                                child: Image.asset(repo.getImageFile(index),
-                                    fit: BoxFit.cover,
-                                    height: double.infinity),
-                              ),
-                              Container(
-                                alignment: FractionalOffset(0.5, 0.8),
-                                child: TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      print("----- text click -----");
-                                      languageState = !languageState;
-                                    });
-                                  },
-                                  child: Text(
-                                    getTextDescription(index),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      fontSize: 36,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ]),
-                      );
-                  },
-                );
+                return PageViewWidget();
               }
               ;
             },
           ),
         ));
+  }
+
+  PageView PageViewWidget() {
+    return PageView.builder(
+      controller: ctrl,
+      //itemCount: fileList.length,
+      itemCount: repo.length(),
+      itemBuilder: (context, index) {
+        print("PageView Builder --- playing audio " + index.toString());
+
+        playAudio(index);
+        return
+            //Image.asset(items[index]);
+            Container(
+          constraints: BoxConstraints.expand(
+              height: MediaQuery.of(context).size.height), // add this line
+          child: Stack(
+              //alignment: FractionalOffset(0.5, 0.8),
+              children: <Widget>[
+                PaintingDisplayWidget(index),
+                TextDisplayWidget(index)
+              ]),
+        );
+      },
+    );
+  }
+
+  Container TextDisplayWidget(int index) {
+    return Container(
+      alignment: FractionalOffset(0.5, 0.8),
+      child: TextButton(
+        onPressed: () {
+          setState(() {
+            print("----- text click -----");
+            languageState = !languageState;
+          });
+        },
+        child: Text(
+          getTextDescription(index),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 36,
+          ),
+        ),
+      ),
+    );
+  }
+
+  KenBurns PaintingDisplayWidget(int index) {
+    return KenBurns(
+      maxScale: 2,
+      minAnimationDuration: Duration(milliseconds: 10000),
+      maxAnimationDuration: Duration(milliseconds: 20000),
+      //child: Image.asset(filePrfix + fileList[index], fit: BoxFit.cover),
+      child: Image.asset(repo.getImageFile(index),
+          fit: BoxFit.cover, height: double.infinity),
+    );
   }
 }

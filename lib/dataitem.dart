@@ -11,14 +11,6 @@ class DataItem {
   String JourdainAudio;
 
   DataItem(this.num, this.imageFile, this.catagory, this.name);
-  /*
-  DataItem(int num, String imageFile, String category, String name){
-    this.num = num;
-    this.imageFile = imageFile;
-    this.catagory = category;
-    this.name = name;
-  }
-  */
 
   DataItem.fromJson(Map<String, dynamic> json)
       : num = json['num'],
